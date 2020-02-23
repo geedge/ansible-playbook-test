@@ -1,0 +1,11 @@
+{
+	"server" : false,
+	"datacenter" : "",
+	"data_dir" : "/var/consul-internal",
+	"encrypt" : "",
+	"disable_update_check" : true,
+	"log_level" : "err",
+	"log_file" : "/var/consul-internal/log/consul_internal.log",
+	"retry_join" : [""],
+	"retry_interval" : "10s"
+}
