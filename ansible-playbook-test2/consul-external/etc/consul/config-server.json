@@ -4,7 +4,6 @@
 	"data_dir" : "/var/consul-external",
 	"encrypt" : "",
 	"disable_update_check" : true,
-	"bootstrap" : true,
 	"log_file" : "/var/consul-external/log/consul_external.log",
 	"retry_join" : [""],
 	"retry_interval" : "10s"
