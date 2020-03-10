@@ -1,0 +1,35 @@
+- name: "copy kafka_manager install package to destination server"
+  copy:
+    src: "{{ role_path }}/files/{{ kafka_manager.package_name }}"
+    dest: /tmp
+
+- name: "install kafka_manager"
+  unarchive:
+    src: "/tmp/{{ kafka_manager.package_name }}"
+    dest: '{{ kafka.base_dir }}'
+    copy: no
+    mode: 0755
+
+- name: "template application.conf"
+  template:
+    src: "{{ role_path }}/templates/application.conf.j2"
+    dest: '{{ kafka.base_dir }}/{{ kafka_manager.version }}/conf/application.conf
+    mode: 0755
+
+- name: "template application.conf"
+  template:
+    src: "{{ role_path }}/templates/start.sh.j2"
+    dest: '{{ kafka.base_dir }}/{{ kafka_manager.version }}/start.sh'
+    mode: 0755
+
+- name: "start kafka_manager"
+  shell: /bin/bash {{ kafka.base_dir }}/{{ kafka_manager.version }}/start.sh
+
+- name: "template create-topic.sh"
+  template:
+    src: "{{ role_path }}/templates/create-topic.sh.j2"
+    dest: '{{ kafka.base_dir }}/{{ kafka.version }}/bin/create-topic.sh'
+    mode: 0755
+
+- name: "create topic"
+  shell: source /etc/profile;/bin/bash {{ kafka.base_dir }}/{{ kafka.version }}/bin/create-topic.sh 

@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+echo -e "\n#kafka" >> /etc/profile
+echo -e "export KAFKA_HOME={{ kafka.base_dir }}/{{ kafka.version }}" >> /etc/profile
+echo -e "export PATH=\$KAFKA_HOME/bin:\$PATH" >> /etc/profile
+source /etc/profile

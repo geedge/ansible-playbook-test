@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' CONNECTION-RECORD-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' PROXY-EVENT-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' RADIUS-RECORD-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' SECURITY-EVENT-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' CONNECTION-RECORD-COMPLETED-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' PROXY-EVENT-COMPLETED-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' RADIUS-RECORD-COMPLETED-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' SECURITY-EVENT-COMPLETED-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' TRAFFIC-METRICS-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' SYS-DATA-STORAGE-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' SYS-STORAGE-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' PXY-EXCH-INTERMEDIA-CERT
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' TOP-EXTERNAL-HOST-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' TOP-INTERNAL-HOST-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' TOP-USER-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' TOP-URLS-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' TOP-WEBSITE-DOMAIN-LOG
+./kafka-topics.sh '--create' '--zookeeper' ''{{ zookeeper.iplist[0] }}':2181/kafka' '--replication-factor' 1 '--partitions' 3 '--topic' RADIUS-ONFF-LOG

@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+echo -e ""##zookeeper"" >> /etc/profile
+echo -e "export ZOOKEEPER_HOME='{{ zookeeper.base_dir }}'/'{{ zookeeper.version }}'" >> /etc/profile
+echo -e "export PATH=\$ZOOKEEPER_HOME/bin:\$PATH" >> /etc/profile
+source /etc/profile

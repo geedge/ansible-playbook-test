@@ -1,0 +1,74 @@
+- name: "copy kafka install package to destination server"
+  copy:
+    src: "{{ role_path }}/files/{{ kafka.package_name }}"
+    dest: /tmp
+
+- name: "create kafka base_dir"
+  file:
+    path: '{{ kafka.base_dir }}'
+    state: directory
+
+- name: "install kafka"
+  unarchive:
+    src: "/tmp/{{ kafka.package_name }}"
+    dest: '{{ kafka.base_dir }}'
+    copy: no
+    mode: 0755
+
+- name: "create logs dir"
+  file:
+    path: '{{ item.path }}'
+    state: '{{ item.state }}'
+  with_items:
+    - { path: '{{ kafka.base_dir }}/{{ kafka.version }}/logs', state: directory }
+    - { path: '{{ kafka.base_dir }}/{{ kafka.version }}/kafka-logs', state: directory }
+
+- name: "copy any scripts and log4j.properties"
+  copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  with_items:
+    - { src: '{{ role_path }}/files/dae-kafka.sh', dest: '{{ kafka.base_dir }}/{{ kafka.version }}/bin/' }
+    - { src: '{{ role_path }}/files/kflogdelete.sh', dest: '{{ kafka.base_dir }}/{{ kafka.version }}/log/' }
+    - { src: '{{ role_path }}/files/log4j.properties', dest: '{{ kafka.base_dir }}/{{ kafka.version }}/config/' }
+    mode: 0755
+
+- name: "echo 0 > restart_sum.log"
+  shell: echo 0 > '{{ kafka.base_dir }}/{{ kafka.version }}/logs/restart_sum.log'
+
+- name: "template server.properties"
+  template:
+    src: "{{ role_path }}/templates/server.properties.j2"
+    dest: '{{ kafka.base_dir }}/{{ kafka.version }}/config/server.properties'
+
+- name: "template kafka-server-start.sh"
+  template:
+    src: "{{ role_path }}/templates/kafka-server-start.sh.j2"
+    dest: '{{ kafka.base_dir }}/{{ kafka.version }}/bin/kafka-server-start.sh'
+
+- name: "template keepkafalive"
+  template:
+    src: "{{ role_path }}/templates/keepkafalive.j2"
+    dest: /etc/init.d/keepkafalive.j2
+    mode: 0755
+
+- name: "start keepkafalive"
+  service:
+    name: keepkafalive
+    state: restarted
+    enabled: true
+
+- name: "template set_kafka_profile.sh"
+  template:
+    src: "{{ role_path }}/templates/set_kafka_profile.sh.j2"
+    dest: /tmp/set_kafka_profile.sh
+    mode: 0755
+
+- name: "judge kafka enviroment"
+  shell: grep "#kafka" /etc/profile
+  register: return
+  ignore_errors: true
+
+- name: "set_kafka_profile"
+  shell: /bin/bash /tmp/set_kafka_profile.sh
+  when: return.rc != 0

@@ -1,0 +1,13 @@
+[all:vars]
+ansible_user=root
+
+[server1]
+172.16.124.129 zk_myid=0 broker_id=0
+
+[server2]
+172.16.124.130 zk_myid=1 broker_id=1
+
+[server3]
+172.16.124.131 zk_myid=2 broker_id=2
+
+

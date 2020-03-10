@@ -1,0 +1,31 @@
+- name: "copy JDK install files to destination server"
+  copy:
+    src: "{{ role_path }}/files/"
+    dest: /tmp
+    mode: 0755
+
+- name: "judge old java"
+  shell: rpm -qa | grep openjdk 
+  register: return
+  ignore_errors: true
+
+- name: "remove old java"
+  shell: rpm -qa | grep openjdk | xargs rpm -e --nodeps
+  when: return.rc == 0
+    
+- name: "install JDK1.8.0_73"
+  unarchive:
+    src: "/tmp/jdk-8u73-linux-x64.tar.gz"
+    dest: /usr/lib/jvm/
+    mode: 0755
+
+- name: "judge java enviroment"
+  shell: grep "/usr/lib/jvm/jdk1.8.0_73" /etc/profile
+  register: return
+
+- name: "set java enviroment"
+  shell: cat /tmp/set_java_enviroment >> /etc/profile
+  when: return.rc != 0
+
+- name: "source /etc/profile"
+  shell: source /etc/profile

@@ -1,0 +1,21 @@
+- hosts: server1
+  roles:
+    - jdk1.8.0_73
+    - zookeeper
+    - kafka
+
+- hosts: server2
+  roles:
+    - jdk1.8.0_73
+    - zookeeper
+    - kafka
+
+- hosts: server3
+  roles:
+    - jdk1.8.0_73
+    - zookeeper
+    - kafka
+
+- hosts: server1
+  roles:
+    - kafka-manager

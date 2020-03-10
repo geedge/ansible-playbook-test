@@ -1,0 +1,11 @@
+#!/bin/bash
+# 
+# netconsole    This loads the netconsole module with the configured parameters.
+#
+# chkconfig:123456 20 80
+# description: keepzkalive
+source /etc/profile
+PRO_NAME=keepzklive
+
+killall -9 dae-zookeeper.sh
+{{ zookeeper.base_dir }}/{{ zookeeper.version }}/bin/dae-zookeeper.sh {{ zookeeper.base_dir }} > /dev/null 2>&1 &

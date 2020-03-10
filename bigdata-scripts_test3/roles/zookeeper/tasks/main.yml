@@ -1,0 +1,91 @@
+- name: "copy zookeeper install package to destination server"
+  copy:
+    src: "{{ role_path }}/files/{{ zookeeper.package_name }}"
+    dest: /tmp
+
+- name: "create zookeeper base_dir"
+  file:
+    path: '{{ zookeeper.base_dir }}'
+    state: touch
+
+- name: "install zookeeper"
+  unarchive:
+    src: "/tmp/{{ zookeeper.package_name }}"
+    dest: '{{ zookeeper.base_dir }}'
+    copy: no
+    mode: 0755
+
+- name: "copy any scripts"
+  copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: 0755
+  with_item:
+    - { src: '{{ role_path }}/files/dae-zookeeper.sh', dest: '{{ zookeeper.base_dir }}/{{ zookeeper.version }}/bin/' }
+    - { src: '{{ role_path }}/files/zkEnv.sh', dest: '{{ zookeeper.base_dir }}/{{ zookeeper.version }}/bin/' }
+    - { src: '{{ role_path }}/files/zklogdelete.sh', dest: '{{ zookeeper.base_dir }}/{{ zookeeper.version }}/bin/' }
+    - { src: '{{ role_path }}/files/zkServer.sh', dest: '{{ zookeeper.base_dir }}/{{ zookeeper.version }}/bin/' }
+
+- name: "copy log4j.properties"
+  copy:
+    src: "{{ role_path }}/files/log4j.properties"
+    dest: '{{ zookeeper.base_dir }}/{{ zookeeper.version }}/conf/'
+
+- name: "create zoo.cfg"
+  template:
+    src: "{{ role_path }}/templates/zoo.cfg.j2"
+    dest: '{{ zookeeper.base_dir }}/{{ zookeeper.version }}/conf/zoo.cfg'
+    mode: 0755
+
+- name: "create any dir"
+  file:
+    path: '{{ item.path }}'
+    state: '{{ item.state }}'
+  with_items:
+    - { path: '{{ zookeeper.base_dir }}/{{ zookeeper.version }}/data', state: directory }
+    - { path: '{{ zookeeper.base_dir }}/{{ zookeeper.version }}/logs', state: directory }
+    - { path: '{{ zookeeper.base_dir }}/{{ zookeeper.version }}/data/myid', state: touch }
+
+- name: "echo 0 > restart_sum.log"
+  shell: echo 0 > '{{ zookeeper.base_dir }}/{{ zookeeper.version }}/logs/restart_sum.log'
+
+- name: "judge zoo.cfg id and ip"
+  shell: grep ":2888:3888" {{ zookeeper.base_dir }}/{{ zookeeper.version }}/conf/zoo.cfg
+  register: return
+  ignore_errors: true
+
+- name: "traverse ip/port"
+  shell: echo "server.{{ item.0 }}={{ item.1 }}:2888:3888" >> {{ zookeeper.base_dir }}/{{ zookeeper.version }}/conf/zoo.cfg
+  with_together:
+    - '{{ zookeeper.idlist }}'
+    - '{{ zookeeper.iplist }}'
+  when: return.rc != 0
+
+- name: "traverse zookeeper myid"
+  shell: echo "{{ zk_myid }}" > {{ zookeeper.base_dir }}/{{ zookeeper.version }}/data/myid
+ 
+- name: "template keepzkalive"
+  template:
+    src: "{{ role_path }}/templates/keepzkalive.j2"
+    dest: /etc/init.d/keepzkalive
+     
+- name: "start keepzkalive"
+  service:
+    name: keepzkalive
+    state: restarted
+    enabled: true
+
+- name: "template set_zk_profile.sh"
+  template:
+    src: "{{ role_path }}/templates/set_zk_profile.sh.j2"
+    dest: /tmp/set_zk_profile.sh
+    mode: 0755  
+
+- name: "judge zookeeper enviroment"
+  shell: grep "#zookeeper" /etc/profile
+  register: return
+  ignore_errors: true
+
+- name: "set_zk_profile"
+  shell: /bin/bash /tmp/set_zk_profile.sh
+  when: return.rc != 0

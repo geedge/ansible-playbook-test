@@ -1,0 +1,11 @@
+#!/bin/bash
+# 
+# netconsole    This loads the netconsole module with the configured parameters.
+#
+# chkconfig:123456 30 70
+# description: keepkafkaalive
+source /etc/profile
+PRO_NAME=keepkafkaalive
+
+killall -9 dae-kafka.sh
+{{ kafka.base_dir }}/{{ kafka.version }}/bin/dae-kafka.sh {{ kafka.base_dir }} > /dev/null 2>&1 &
